@@ -13,10 +13,10 @@ import SendEidos
 import SendSmart
 import logging
 
-
+storage = MemoryStorage()
 TOKEN = os.getenv('BOT_TOKEN')
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher(bot, storage = MemoryStorage())
 
 HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
 
