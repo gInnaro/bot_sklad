@@ -12,7 +12,7 @@ from email.mime.text import MIMEText                      # Текст/HTML
 def sendslk():
   
   addr_from = "2274063@mail.ru"                 # Адресат
-  addr_to   = "sklad407@mail.ru"                   # Получатель
+  addr_to   = "ab@tpidea.ru"                   # Получатель
   password  = "uyVLkxjyZV9XqhLxwcUs"                                  # Пароль
 
   msg = MIMEMultipart()                               # Создаем сообщение
