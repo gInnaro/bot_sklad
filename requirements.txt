@@ -4,4 +4,3 @@ aiosignal==1.2.0
 async-generator==1.10
 async-timeout==4.0.2
 docxtpl==0.15.2
-datetime==4.4
