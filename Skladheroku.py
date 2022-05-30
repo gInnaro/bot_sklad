@@ -4,7 +4,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ParseMode
-from aiogram.utils import executor
 from aiogram.utils.executor import start_webhook
 from docxtpl import DocxTemplate
 import asyncio
@@ -139,4 +138,5 @@ async def arrivaldate(message):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, on_shutdown=on_shutdown, host=WEBAPP_HOST, port=WEBAPP_PORT)
+    logging.basicConfig(level=logging.INFO)
+    start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, on_shutdown=on_shutdown, host=WEBAPP_HOST, port=WEBAPP_PORT)
