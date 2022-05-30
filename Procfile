@@ -1,1 +1,1 @@
-worker: python Skladheroku.py $PORT
+web: python Skladheroku.py runserver
