@@ -12,6 +12,9 @@ import time
 import SendEidos
 import SendSmart
 import logging
+from datetime import datetime
+
+dt = datetime.now()
 
 storage = MemoryStorage()
 TOKEN = os.getenv('BOT_TOKEN')
@@ -136,7 +139,7 @@ async def arrivaldate(message):
         await Form.next()
         await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
 
-
+print(dt)
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, on_shutdown=on_shutdown, host=WEBAPP_HOST, port=WEBAPP_PORT)
