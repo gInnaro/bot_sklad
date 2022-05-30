@@ -12,11 +12,7 @@ import time
 import SendEidos
 import SendSmart
 import logging
-from datetime import datetime
 
-async def time():
-    dt = datetime.now()
-    print(dt)
 
 storage = MemoryStorage()
 TOKEN = os.getenv('BOT_TOKEN')
