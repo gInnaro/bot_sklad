@@ -1,1 +1,1 @@
-web: python Skladheroku.py
+web: python Skladheroku.py runserver
