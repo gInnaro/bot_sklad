@@ -12,6 +12,8 @@ import time
 import SendEidos
 import SendSmart
 import logging
+import threading
+import datetime
 
 
 storage = MemoryStorage()
@@ -30,7 +32,13 @@ WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = os.getenv('PORT', default=8000)
 
-
+def no_sleep():
+    while True:
+        current_date_time = datetime.datetime.now()
+        current_time = current_date_time.time()
+        print(current_time)
+        time.sleep(1200)
+        
 async def on_startup(dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
@@ -123,7 +131,9 @@ async def number(message):
         number_t = message.text;
         print('Гос.номер: ' + number_t)
         await Form.next()
-        await bot.send_message(message.chat.id, 'Какого числа должен заехать? ')
+        dt_now = datetime.datetime.now()
+        dt = dt_now.strftime("%d.%m.%y")
+        await bot.send_message(message.chat.id, 'Какого числа должен заехать? \nСегодняшняя дата: ' +  dt)
 
 @dp.message_handler(state=Form.arrivaldate_t)        
 async def arrivaldate(message):
