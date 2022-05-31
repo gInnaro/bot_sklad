@@ -39,6 +39,11 @@ def no_sleep():
         print(current_time)
         time.sleep(100)
         
+
+async def on_startup(dispatcher):
+    await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+    
+    
 patheidos = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВКА НА ВЪЕЗД НА склад.docx')
 doceidos = DocxTemplate("Eidos.docx")
 pathsmart = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx')
@@ -143,4 +148,4 @@ async def arrivaldate(message):
 if __name__ == '__main__':
     threading.Thread(target=no_sleep).start()
     logging.basicConfig(level=logging.INFO)
-    start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, host=WEBAPP_HOST, port=WEBAPP_PORT)
+    start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, host=WEBAPP_HOST, port=WEBAPP_PORT)
