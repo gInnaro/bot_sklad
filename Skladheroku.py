@@ -14,6 +14,7 @@ import SendSmart
 import logging
 import threading
 import datetime
+import requests
 
 
 storage = MemoryStorage()
@@ -34,9 +35,7 @@ WEBAPP_PORT = os.getenv('PORT', default=8000)
 
 def no_sleep():
     while True:
-        current_date_time = datetime.datetime.now()
-        current_time = current_date_time.time()
-        print(current_time)
+        res = requests.get('https://bot-sklad.herokuapp.com/')
         time.sleep(100)
         
 
