@@ -132,7 +132,7 @@ async def number(message):
         print('Гос.номер: ' + number_t)
         await Form.next()
         dt_now = datetime.datetime.now()
-        dt = dt_now.strftime("%d.%m.%y")
+        dt = dt_now.strftime("%d.%m.%Y")
         await bot.send_message(message.chat.id, 'Какого числа должен заехать? \nСегодняшняя дата: ' +  dt)
 
 @dp.message_handler(state=Form.arrivaldate_t)        
