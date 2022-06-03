@@ -78,7 +78,7 @@ async def sendeidos(message: types.Message):
     await bot.send_message(message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
     time.sleep(2)
     SendEidos.checkem()
-    await bot.send_message(message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass')
+    await bot.send_message(message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
     print('                   Пропуск отправлен ')
     
 #Блок СМАРТЛАЙФКЕЯ
