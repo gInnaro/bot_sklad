@@ -12,9 +12,9 @@ from email.mime.text import MIMEText                      # Текст/HTML
 
   
 def checkem():
-  addr_from = "2274063@mail.ru"                 # Адресат
-  addr_to   = "ab@tpidea.ru"                   # Получатель
-  password  = "uyVLkxjyZV9XqhLxwcUs"                                  # Пароль
+  addr_from = os.getenv('ADDR_FROM')                      # Адресат
+  addr_to   = os.getenv('ADDR_TO')                   # Получатель
+  password  = os.getenv('PASSWORD')                                  # Пароль
 
   msg = MIMEMultipart()                         # Создаем сообщение
   msg['From']    = addr_from;                          # Адресат
