@@ -49,16 +49,9 @@ doceidos = DocxTemplate("Eidos.docx")
 pathsmart = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx')
 docsmart = DocxTemplate("Smart.docx")
 
-#keybords
-but_yes = InlineKeyboardButton('Да', callback_data='btn1')
-but_no = InlineKeyboardButton('Нет', callback_data='btn2')
-but_er = InlineKeyboardButton('Ошибка', callback_data='btn3')
-but_vopros = InlineKeyboardMarkup().add(but_yes, but_no, but_er)
-
 class Form(StatesGroup):
     brand_t = State()  # Will be represented in storage as 'Form:name'
     number_t = State()  # Will be represented in storage as 'Form:age'
-    button_t = State()
     arrivaldate_t = State()  # Will be represented in storage as 'Form:gender
 
 # Функция, обрабатывающая команду /start
@@ -137,35 +130,19 @@ async def number(message):
         await Form.next()
         dt_now = datetime.datetime.now()
         dt = dt_now.strftime("%d.%m.%Y")
-        await bot.send_message(message.chat.id, 'Сегодня должен заехать? \nСегодняшняя дата: ' +  dt, reply_markup=but_vopros)
+        await bot.send_message(message.chat.id, 'Какого числа должен заехать? \nСегодняшняя дата: ' +  dt)
 
-@dp.callback_query_handler(lambda c: c.data.startswith('btn'), state=Form.button_t) 
-async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
+@dp.message_handler(state=Form.arrivaldate_t)        
+async def arrivaldate(message):
     global arrivaldate_t; #получаем дату въезда
-    code = callback_query.data[-1]
-    if code.isdigit():
-        code = int(code)
-    if code == 1:
-        dt_now = datetime.datetime.now()
-        dt = dt_now.strftime("%d.%m.%Y")
-        arrivaldate_t = dt
-        print('Дата вьезда: ' + arrivaldate_t)
-        await state.reset_state(with_data=False)
-        await bot.send_message(callback_query.from_user.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
-    elif code == 2:
-        await Form.next()
-        await bot.send_message(callback_query.from_user.id, 'А какого числа должен заехать? ')
-    elif code == 3:
+    if message.text == 'Ошибка' or message.text == 'ошибка':
         await Form.number_t.set()
-        await bot.send_message(callback_query.from_user.id, 'Номера Автомобиля? ');
-
-@dp.message_handler(state=Form.arrivaldate_t)
-async def arrivaldate(message, state: FSMContext):
-    global arrivaldate_t; #получаем дату въезда
-    arrivaldate_t = message.text;
-    print('Дата вьезда: ' + arrivaldate_t)
-    await state.reset_state(with_data=False)
-    await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
+        await bot.send_message(message.chat.id, 'Номера Автомобиля? ');
+    else:
+        arrivaldate_t = message.text;
+        print('Дата вьезда: ' + arrivaldate_t)
+        await Form.next()
+        await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
 
 if __name__ == '__main__':
     threading.Thread(target=no_sleep).start()
