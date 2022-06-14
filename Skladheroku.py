@@ -151,7 +151,6 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         arrivaldate_t = dt
         print('Дата вьезда: ' + arrivaldate_t)
         await state.reset_state(with_data=False)
-        await callback_query.message.edit_reply_markup()
         await bot.send_message(callback_query.message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
     elif code == 2:
         await Form.next()
@@ -159,6 +158,7 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
     elif code == 3:
         await Form.number_t.set()
         await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ');
+    await callback_query.message.edit_reply_markup()
 
 @dp.message_handler(state=Form.arrivaldate_t)
 async def arrivaldate(message, state: FSMContext):
