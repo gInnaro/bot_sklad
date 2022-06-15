@@ -53,7 +53,11 @@ docsmart = DocxTemplate("Smart.docx")
 but_yes = InlineKeyboardButton('Да', callback_data='btn1')
 but_no = InlineKeyboardButton('Нет', callback_data='btn2')
 but_er = InlineKeyboardButton('Ошибка', callback_data='btn3')
+but_em = InlineKeyboardButton('Эйдос-Медицина', callback_data='btn4')
+but_slk = InlineKeyboardButton('Смартлайфкея', callback_data='btn5')
+
 but_vopros = InlineKeyboardMarkup().add(but_yes, but_no, but_er)
+but_send = InlineKeyboardMarkup().add(but_em, but_slk)
 
 class Form(StatesGroup):
     brand_t = State()  # Will be represented in storage as 'Form:brand_t'
@@ -67,47 +71,6 @@ class Form(StatesGroup):
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
     await bot.send_message(message.chat.id, "Чтобы сделать пропуск, нужна марка автомобиля, гос.номер, и дата вьезда. \nМарка автомобиля с большой буквы.\nГос.номер нужно писать формате, А 111 АА. \nА дата вьезда, это дата вьезда автомобиля, и писать ее нужно формате ДД.ММ.ГГГГ. \nЧтобы сделать пропуск нужно отправить в чат /pass. \nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.")
-
-#Блок ЭЙДОС-МЕДИЦИНА
-    
-@dp.message_handler(commands=["sendeidos"])
-#Сохранием файл
-async def sendeidos(message: types.Message):
-    if os.path.isfile(patheidos) == True:
-        os.remove(patheidos)
-    else:
-        print("Файла нет, идем дальше")
-    context = {'Brand' : brand_t, 'Number' : number_t, 'ArrivalDate' : arrivaldate_t}
-    doceidos.render(context)
-    doceidos.save("ЗАЯВКА НА ВЪЕЗД НА склад.docx")
-    print('                   Эйдос-Медицина: ')
-    print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
-    await bot.send_message(message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
-    time.sleep(2)
-    SendEidos.checkem()
-    await bot.send_message(message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
-    print('                   Пропуск отправлен ')
-    
-#Блок СМАРТЛАЙФКЕЯ
-@dp.message_handler(commands=["sendsmart"])
-#Сохранием файл
-async def sendsmart(message: types.Message):
-    if os.path.isfile(pathsmart) == True:
-        os.remove(pathsmart)
-    else:
-        print("Файла нет, идем дальше")
-    context = {'Brand' : brand_t, 'Number' : number_t, 'ArrivalDate' : arrivaldate_t}
-    print(context)
-    docsmart.render(context)
-    docsmart.save("ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx")
-    print('                   Смартлайфкеа: ')
-    print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
-    await bot.send_message(message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
-    time.sleep(2)
-    SendSmart.sendslk()
-    await bot.send_message(message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
-    print('                   Пропуск отправлен ')
-
 
 # Функция, обрабатывающая команду /pass
 # Команда pass
@@ -151,7 +114,7 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         arrivaldate_t = dt
         print('Дата вьезда: ' + arrivaldate_t)
         await state.reset_state(with_data=False)
-        await bot.send_message(callback_query.message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
+        await bot.send_message(callback_query.message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
     elif code == 2:
         await Form.next()
         await bot.send_message(callback_query.message.chat.id, 'А какого числа должен заехать? ')
@@ -166,8 +129,49 @@ async def arrivaldate(message, state: FSMContext):
     arrivaldate_t = message.text;
     print('Дата вьезда: ' + arrivaldate_t)
     await state.reset_state(with_data=False)
-    await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.')
+    await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
 
+@dp.callback_query_handler(lambda c: c.data.startswith('btn')) 
+async def send(callback_query: types.CallbackQuery, state: FSMContext):
+    code = callback_query.data[-1]
+    if code.isdigit():
+        code = int(code)
+    if code == 4:
+        #Блок Эйдос-Медицины
+        await callback_query.message.edit_reply_markup()
+        if os.path.isfile(patheidos) == True:
+            os.remove(patheidos)
+        else:
+            print("Файла нет, идем дальше")
+        context = {'Brand' : brand_t, 'Number' : number_t, 'ArrivalDate' : arrivaldate_t}
+        doceidos.render(context)
+        doceidos.save("ЗАЯВКА НА ВЪЕЗД НА склад.docx")
+        print('                   Эйдос-Медицина: ')
+        print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
+        time.sleep(2)
+        SendEidos.checkem()
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass')
+        print('                   Пропуск отправлен ')
+    elif code == 5:
+        #Блок Смартлайфкея
+        await callback_query.message.edit_reply_markup()
+        if os.path.isfile(pathsmart) == True:
+            os.remove(pathsmart)
+        else:
+            print("Файла нет, идем дальше")
+        context = {'Brand' : brand_t, 'Number' : number_t, 'ArrivalDate' : arrivaldate_t}
+        print(context)
+        docsmart.render(context)
+        docsmart.save("ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx")
+        print('                   Смартлайфкеа: ')
+        print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
+        time.sleep(2)
+        SendSmart.sendslk()
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
+        print('                   Пропуск отправлен ')
+    
 if __name__ == '__main__':
     threading.Thread(target=no_sleep).start()
     logging.basicConfig(level=logging.INFO)
