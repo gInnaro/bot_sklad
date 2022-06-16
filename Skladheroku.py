@@ -36,7 +36,7 @@ WEBAPP_PORT = os.getenv('PORT', default=8000)
 
 def no_sleep():
     while True:
-        res = requests.get('https://bot-sklad.herokuapp.com/')
+        res = requests.get(f'https://{HEROKU_APP_NAME}.herokuapp.com')
         time.sleep(100)
         
 
@@ -148,7 +148,7 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         doceidos.save("ЗАЯВКА НА ВЪЕЗД НА склад.docx")
         print('                   Эйдос-Медицина: ')
         print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
-        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется от Эйдос-Медицины, нужно чуточку подождать ')
         time.sleep(2)
         SendEidos.checkem()
         await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass')
@@ -166,7 +166,7 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         docsmart.save("ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx")
         print('                   Смартлайфкеа: ')
         print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
-        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется, нужно чуточку подождать ')
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется от Смартлайфкея, нужно чуточку подождать ')
         time.sleep(2)
         SendSmart.sendslk()
         await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
