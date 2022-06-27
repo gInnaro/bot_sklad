@@ -151,7 +151,7 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется от Эйдос-Медицины, нужно чуточку подождать ')
         time.sleep(2)
         SendEidos.checkem()
-        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass')
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
         print('                   Пропуск отправлен ')
     elif code == 5:
         #Блок Смартлайфкея
