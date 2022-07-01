@@ -63,7 +63,13 @@ class Form(StatesGroup):
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    await bot.send_message(message.chat.id, "Чтобы сделать пропуск, нужна марка автомобиля, гос.номер, и дата вьезда. \nМарка автомобиля с большой буквы.\nГос.номер нужно писать формате, А 111 АА. \nА дата вьезда, это дата вьезда автомобиля, и писать ее нужно формате ДД.ММ.ГГГГ. \nЧтобы сделать пропуск нужно отправить в чат /pass. \nЧтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.")
+    await bot.send_message(message.chat.id, '''
+Чтобы сделать пропуск, нужна марка автомобиля, гос.номер, и дата вьезда. 
+Марка автомобиля с большой буквы.
+Гос.номер нужно писать формате, А 111 АА. 
+А дата вьезда, это дата вьезда автомобиля, и писать ее нужно формате ДД.ММ.ГГГГ. 
+Чтобы сделать пропуск нужно отправить в чат /pass. 
+Чтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.''')
 
 # Функция, обрабатывающая команду /pass
 # Команда pass
@@ -71,24 +77,32 @@ async def process_start_command(message: types.Message):
 @dp.message_handler(commands=["pass"])
 async def passn(message: types.Message):
     await Form.brand_t.set()
-    await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
+    global msg_id
+    msg_id = await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
     
 @dp.message_handler(state=Form.brand_t)
 async def brand(message): #получаем марку Автомобиля
     global brand_t;
     brand_t = message.text;
+    await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id+1)
+    await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_id.message_id, text = f'Марка Автомобиля: \n{brand_t}')
     print('Марка: ' + brand_t);
-    await Form.next()
-    await bot.send_message(message.chat.id, 'Номера Автомобиля? ')
+    global msg_idn
+    msg_idn = await bot.send_message(message.chat.id, 'Номера Автомобиля? ')
     
 @dp.message_handler(state=Form.number_t)        
 async def number(message):
     global number_t; #получаем номер Автомобиля
     if message.text == 'Ошибка' or message.text == 'ошибка':
         await Form.brand_t.set()
-        await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
+        global msg_id
+        msg_id = await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id-1)
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn.message_id)
     else:
         number_t = message.text;
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn.message_id+1)
+        await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_idn.message_id, text = f'Номера Автомобиля: \n{number_t}')
         print('Гос.номер: ' + number_t)
         await Form.next()
         dt_now = datetime.datetime.now()
@@ -107,23 +121,39 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         arrivaldate_t = dt
         print('Дата вьезда: ' + arrivaldate_t)
         await state.reset_state(with_data=False)
-        await bot.send_message(callback_query.message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
-    elif code == 2:
+        await bot.send_message(callback_query.message.chat.id, f'''
+Марка: {brand_t}
+Гос.номер: {number_t}
+Дата вьезда: {arrivaldate_t}
+Чтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.''', reply_markup=but_send)
+        elif code == 2:
         await Form.next()
-        await bot.send_message(callback_query.message.chat.id, 'А какого числа должен заехать? ')
+        global msg_idd
+        msg_idd = await bot.send_message(callback_query.message.chat.id, 'А какого числа должен заехать? ')
     elif code == 3:
         await Form.number_t.set()
-        await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ');
+        global msg_idn
+        msg_idn = await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ');
+        await bot.delete_message(chat_id=callback_query.message.chat.id, message_id=msg_idn.message_id-2)
     await callback_query.message.edit_reply_markup()
 
 @dp.message_handler(state=Form.arrivaldate_t)
 async def arrivaldate(message, state: FSMContext):
     global arrivaldate_t; #получаем дату въезда
     arrivaldate_t = message.text;
+    dt_now = datetime.datetime.now()
+    dt = dt_now.strftime("%d.%m.%Y")
+    if arrivaldate_t != dt:
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idd.message_id+1)
+    await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_idd.message_id, text = f'Заехать должен: \n{arrivaldate_t}')
     print('Дата вьезда: ' + arrivaldate_t)
     await state.reset_state(with_data=False)
-    await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
-
+    await bot.send_message(message.chat.id, f'''
+Марка: {brand_t}
+Гос.номер: {number_t}
+Дата вьезда: {arrivaldate_t}
+Чтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.''', reply_markup=but_send)
+    
 @dp.callback_query_handler(lambda c: c.data.startswith('btn')) 
 async def send(callback_query: types.CallbackQuery, state: FSMContext):
     code = callback_query.data[-1]
