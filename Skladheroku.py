@@ -85,7 +85,8 @@ async def passn(message: types.Message):
 async def brand(message): #получаем марку Автомобиля
     global brand_t;
     brand_t = message.text;
-    await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id + 1)
+    msg_id = msg_id.message_id
+    await bot.delete_message(chat_id=message.chat.id, message_id=int(msg_id + 1))
     await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_id.message_id, text = f'Марка Автомобиля: \n{brand_t}')
     print('Марка: ' + brand_t);
     global msg_idn
