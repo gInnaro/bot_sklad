@@ -85,7 +85,7 @@ async def passn(message: types.Message):
 async def brand(message): #получаем марку Автомобиля
     global brand_t;
     brand_t = message.text;
-    await bot.delete_message(chat_id=message.chat.id, message_id=str(int(msg_id.message_id)+1))
+    await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id + 1)
     await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_id.message_id, text = f'Марка Автомобиля: \n{brand_t}')
     print('Марка: ' + brand_t);
     global msg_idn
@@ -98,11 +98,11 @@ async def number(message):
         await Form.brand_t.set()
         global msg_id
         msg_id = await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
-        await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id-1)
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_id.message_id - 1)
         await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn.message_id)
     else:
         number_t = message.text;
-        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn.message_id+1)
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn.message_id + 1)
         await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_idn.message_id, text = f'Номера Автомобиля: \n{number_t}')
         print('Гос.номер: ' + number_t)
         await Form.next()
@@ -135,7 +135,7 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         await Form.number_t.set()
         global msg_idn
         msg_idn = await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ');
-        await bot.delete_message(chat_id=callback_query.message.chat.id, message_id=msg_idn.message_id-2)
+        await bot.delete_message(chat_id=callback_query.message.chat.id, message_id=msg_idn.message_id - 2)
     await callback_query.message.edit_reply_markup()
 
 @dp.message_handler(state=Form.arrivaldate_t)
@@ -145,7 +145,7 @@ async def arrivaldate(message, state: FSMContext):
     dt_now = datetime.datetime.now()
     dt = dt_now.strftime("%d.%m.%Y")
     if arrivaldate_t != dt:
-        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idd.message_id+1)
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_idd.message_id + 1)
     await bot.edit_message_text(chat_id=message.chat.id, message_id=msg_idd.message_id, text = f'Заехать должен: \n{arrivaldate_t}')
     print('Дата вьезда: ' + arrivaldate_t)
     await state.reset_state(with_data=False)
