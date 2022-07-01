@@ -126,7 +126,7 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
 Гос.номер: {number_t}
 Дата вьезда: {arrivaldate_t}
 Чтобы сделать на Эйдос-Медицина то /sendeidos, а на Смартлайфкея /sendsmart.''', reply_markup=but_send)
-        elif code == 2:
+    elif code == 2:
         await Form.next()
         global msg_idd
         msg_idd = await bot.send_message(callback_query.message.chat.id, 'А какого числа должен заехать? ')
