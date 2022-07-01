@@ -79,7 +79,6 @@ async def passn(message: types.Message):
     await Form.brand_t.set()
     global msg_id
     msg_id = await bot.send_message(message.chat.id, 'Марка Автомобиля? ')
-    msg_id = msg_id.message_id+1
     
 @dp.message_handler(state=Form.brand_t)
 async def brand(message): #получаем марку Автомобиля
