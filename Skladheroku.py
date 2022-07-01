@@ -136,7 +136,8 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
     elif code == 3:
         await Form.number_t.set()
         global msg_idn
-        msg_idn = await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ');
+        msg_idn = await bot.send_message(callback_query.message.chat.id, 'Номера Автомобиля? ')
+        msg_idn = msg_idn.message_id
         await bot.delete_message(chat_id=callback_query.message.chat.id, message_id=int(msg_idn) - 2)
     await callback_query.message.edit_reply_markup()
 
