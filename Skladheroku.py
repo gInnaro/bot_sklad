@@ -13,7 +13,6 @@ import time
 import SendEidos
 import SendSmart
 import logging
-import threading
 import datetime
 import requests
 
@@ -33,12 +32,6 @@ WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 # webserver settings
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = os.getenv('PORT', default=8000)
-
-def no_sleep():
-    while True:
-        res = requests.get(f'https://{HEROKU_APP_NAME}.herokuapp.com')
-        time.sleep(100)
-        
 
 async def on_startup(dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
@@ -173,6 +166,5 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         print('                   Пропуск отправлен ')
     
 if __name__ == '__main__':
-    threading.Thread(target=no_sleep).start()
     logging.basicConfig(level=logging.INFO)
     start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, host=WEBAPP_HOST, port=WEBAPP_PORT)
