@@ -90,7 +90,7 @@ async def brand(message): #получаем марку Автомобиля
     print('Марка: ' + brand_t);
     global msg_idn
     msg_idn = await bot.send_message(message.chat.id, 'Номера Автомобиля? ')
-    msg_id = msg_id.message_id
+    msg_idn = msg_idn.message_id
     
 @dp.message_handler(state=Form.number_t)        
 async def number(message):
@@ -99,6 +99,7 @@ async def number(message):
         await Form.brand_t.set()
         global msg_id
         msg_id = await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
+        msg_id = msg_id.message_id
         await bot.delete_message(chat_id=message.chat.id, message_id=int(msg_id) - 1)
         await bot.delete_message(chat_id=message.chat.id, message_id=msg_idn)
     else:
@@ -132,7 +133,7 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         await Form.next()
         global msg_idd
         msg_idd = await bot.send_message(callback_query.message.chat.id, 'А какого числа должен заехать? ')
-        msg_idn = msg_idn.message_id
+        msg_idd = msg_idd.message_id
     elif code == 3:
         await Form.number_t.set()
         global msg_idn
