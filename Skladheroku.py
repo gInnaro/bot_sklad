@@ -173,6 +173,5 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         print('                   Пропуск отправлен ')
     
 if __name__ == '__main__':
-    threading.Thread(target=no_sleep).start()
     logging.basicConfig(level=logging.INFO)
     start_webhook(dp, skip_updates=True, webhook_path=WEBHOOK_PATH, on_startup=on_startup, host=WEBAPP_HOST, port=WEBAPP_PORT)
