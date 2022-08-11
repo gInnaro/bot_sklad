@@ -13,7 +13,6 @@ import time
 import SendEidos
 import SendSmart
 import logging
-import threading
 import datetime
 import requests
 
@@ -33,12 +32,6 @@ WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 # webserver settings
 WEBAPP_HOST = '0.0.0.0'
 WEBAPP_PORT = os.getenv('PORT', default=8000)
-
-def no_sleep():
-    while True:
-        res = requests.get(f'https://{HEROKU_APP_NAME}.herokuapp.com')
-        time.sleep(100)
-        
 
 async def on_startup(dispatcher):
     await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
