@@ -9,7 +9,7 @@ from email import encoders                                # Импортируе
 from email.mime.base import MIMEBase                      # Общий тип
 from email.mime.text import MIMEText                      # Текст/HTML
 
-def sendslk():
+def sendemg():
   
   addr_from = os.getenv('ADDR_FROM')                      # Адресат
   addr_to   = os.getenv('ADDR_TO')                   # Получатель
