@@ -12,6 +12,7 @@ import os
 import time
 import SendEidos
 import SendSmart
+import SendEmg
 import logging
 import datetime
 import requests
@@ -41,6 +42,8 @@ patheidos = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВК
 doceidos = DocxTemplate("Eidos.docx")
 pathsmart = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВКА НА ВЪЕЗД СМАРТЛАЙФКЕА.docx')
 docsmart = DocxTemplate("Smart.docx")
+pathemg = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ЗАЯВКА НА ВЪЕЗД ЕМГ.docx')
+docsmart = DocxTemplate("Emg.docx")
 
 #keybords
 but_yes = InlineKeyboardButton('Да', callback_data='btn1')
@@ -48,9 +51,10 @@ but_no = InlineKeyboardButton('Нет', callback_data='btn2')
 but_er = InlineKeyboardButton('Ошибка', callback_data='btn3')
 but_em = InlineKeyboardButton('Эйдос-Медицина', callback_data='btn4')
 but_slk = InlineKeyboardButton('Смартлайфкея', callback_data='btn5')
+but_emg = InlineKeyboardButton('Эвотек', callback_data='btn6')
 
 but_vopros = InlineKeyboardMarkup().add(but_yes, but_no, but_er)
-but_send = InlineKeyboardMarkup().add(but_em, but_slk)
+but_send = InlineKeyboardMarkup().add(but_em, but_slk, but_emg)
 
 class Form(StatesGroup):
     brand_t = State()  # Will be represented in storage as 'Form:brand_t'
@@ -77,7 +81,6 @@ async def passn(message: types.Message):
 async def brand(message): #получаем марку Автомобиля
     global brand_t;
     brand_t = message.text;
-    print('Марка: ' + brand_t);
     await Form.next()
     await bot.send_message(message.chat.id, 'Номера Автомобиля? ')
     
@@ -89,7 +92,6 @@ async def number(message):
         await bot.send_message(message.chat.id, 'Марка Автомобиля? ');
     else:
         number_t = message.text;
-        print('Гос.номер: ' + number_t)
         await Form.next()
         dt_now = datetime.datetime.now()
         dt = dt_now.strftime("%d.%m.%Y")
@@ -105,7 +107,6 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
         dt_now = datetime.datetime.now()
         dt = dt_now.strftime("%d.%m.%Y")
         arrivaldate_t = dt
-        print('Дата вьезда: ' + arrivaldate_t)
         await state.reset_state(with_data=False)
         await bot.send_message(callback_query.message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
     elif code == 2:
@@ -120,7 +121,6 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
 async def arrivaldate(message, state: FSMContext):
     global arrivaldate_t; #получаем дату въезда
     arrivaldate_t = message.text;
-    print('Дата вьезда: ' + arrivaldate_t)
     await state.reset_state(with_data=False)
     await bot.send_message(message.chat.id, 'Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
 
@@ -162,6 +162,24 @@ async def send(callback_query: types.CallbackQuery, state: FSMContext):
         await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется от Смартлайфкея, нужно чуточку подождать ')
         time.sleep(2)
         SendSmart.sendslk()
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
+        print('                   Пропуск отправлен ')
+    elif code == 6:
+        #Блок Эвотек
+        await callback_query.message.edit_reply_markup()
+        if os.path.isfile(pathemg) == True:
+            os.remove(pathemg)
+        else:
+            print("Файла нет, идем дальше")
+        context = {'Brand' : brand_t, 'Number' : number_t, 'ArrivalDate' : arrivaldate_t}
+        print(context)
+        docsmart.render(context)
+        docsmart.save("ЗАЯВКА НА ВЪЕЗД ЕМГ.docx")
+        print('                   Эвотек: ')
+        print('Марка: ' + brand_t + '\nГос.номер: ' + number_t + '\nДата вьезда: ' + arrivaldate_t)
+        await bot.send_message(callback_query.message.chat.id, 'Пропуск отправляется от Эвотек нужно чуточку подождать ')
+        time.sleep(2)
+        SendEmg.sendemg()
         await bot.send_message(callback_query.message.chat.id, 'Пропуск отправлен. \nЧтобы сделать новый пропуск, отправь /pass \nЕсли я не отвечаю на ваше сообщение откройте сайт снизу и я вам сразу отвечу. \nhttps://bot-sklad.herokuapp.com/')
         print('                   Пропуск отправлен ')
     
