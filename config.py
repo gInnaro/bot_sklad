@@ -5,8 +5,7 @@ from docxtpl import DocxTemplate
 
 logging.basicConfig(level=logging.INFO)
 
-# TOKEN = '5130607365:AAGY8bBb8DiwuAhs78PziNHFvrniyTzLJac'
-TOKEN = '5874892534:AAG67usC2inn-qUXfxAMjkn6G56sX2aS5ns'
+TOKEN = 'Ваш ТОКЕН'
 BOT_VERSION = 0.1
 
 #Документы
