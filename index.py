@@ -3,12 +3,11 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils import executor
-from aiogram.types import InlineKeyboardMarkup
 import os
 import time
 import SendEidos, SendSmart, SendEmg
 from config import TOKEN, patheidos, doceidos, pathsmart, docsmart, pathemg, docemg
-from buttons import but_yes, but_no, but_er, but_em, but_slk, but_emg
+from buttons import but_vopros, but_send
 from db import BotDB
 import datetime
 
@@ -16,10 +15,6 @@ storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage = MemoryStorage())
 BotDB = BotDB('database.db')
-
-#keybords
-but_vopros = InlineKeyboardMarkup().add(but_yes, but_no, but_er)
-but_send = InlineKeyboardMarkup().add(but_em, but_slk, but_emg)
 
 class Form(StatesGroup):
     brand_t = State()
