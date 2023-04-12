@@ -82,8 +82,8 @@ async def button_t(callback_query: types.CallbackQuery, state: FSMContext):
 @dp.message_handler(state=Form.arrivaldate_t)
 async def arrivaldate(message, state: FSMContext):
     arrivaldate_t = message.text
-    BotDB.edit_arrivaldate(message.chat.id, arrivaldate_t)
-    datas = BotDB.sends_data(message.chat.id)
+    BotDB.edit_arrivaldate(message.from_user.id, arrivaldate_t)
+    datas = BotDB.sends_data(message.from_user.id)
     username, brand_data, number_data, date_data = [data for data in datas]
     await state.reset_state(with_data=False)
     await bot.send_message(message.chat.id, 'Марка: ' + brand_data + '\nГос.номер: ' + number_data + '\nДата вьезда: ' + date_data + '\nОт какой организации сделать пропуск? ', reply_markup=but_send)
