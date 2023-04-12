@@ -1,6 +1,2 @@
-aiogram==2.19
-aiohttp==3.8.1
-aiosignal==1.2.0
-async-generator==1.10
-async-timeout==4.0.2
-docxtpl==0.15.2
+aiogram~=2.22.1
+docxtpl~=0.15.2
